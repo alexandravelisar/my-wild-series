@@ -2,19 +2,6 @@ import type { RequestHandler } from "express";
 
 import categoryRepository from "./categoryRepository";
 
-// Some data to make the trick
-
-const categories = [
-  {
-    id: 1,
-    name: "Comédie",
-  },
-  {
-    id: 2,
-    name: "Science-Fiction",
-  },
-];
-
 // Declare the actions
 
 const browse: RequestHandler = async (req, res, next) => {
@@ -27,15 +14,18 @@ const browse: RequestHandler = async (req, res, next) => {
   }
 };
 
-const read: RequestHandler = (req, res) => {
-  const parsedId = Number(req.params.id);
+const read: RequestHandler = async (req, res, next) => {
+  try {
+    const categoryId = Number(req.params.id);
+    const category = await categoryRepository.read(categoryId);
 
-  const category = categories.find((c) => c.id === parsedId);
-
-  if (category != null) {
-    res.json(category);
-  } else {
-    res.sendStatus(404);
+    if (category == null) {
+      res.sendStatus(404);
+    } else {
+      res.json(category);
+    }
+  } catch (err) {
+    next(err);
   }
 };
 

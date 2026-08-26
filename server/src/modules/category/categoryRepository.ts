@@ -19,6 +19,30 @@ class CategoryRepository {
 
     return rows as Category[];
   }
+
+  async read(id: number) {
+    const [rows] = await databaseClient.query<Rows>(
+      `
+      select 
+        category.*, 
+        JSON_ARRAYAGG(
+          JSON_OBJECT(
+            "id", program.id, "title", program.title
+          )
+        ) as programs 
+      from 
+        category 
+        left join program on program.category_id = category.id 
+      where 
+        category.id = ? 
+      group by 
+        category.id
+      `,
+      [id],
+    );
+
+    return rows[0] as Category;
+  }
 }
 
 export default new CategoryRepository();
