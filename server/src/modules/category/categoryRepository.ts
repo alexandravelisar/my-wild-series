@@ -1,6 +1,6 @@
 import databaseClient from "../../../database/client";
 
-import type { Rows } from "../../../database/client";
+import type { Result, Rows } from "../../../database/client";
 
 type Program = {
   id: number;
@@ -10,6 +10,9 @@ type Program = {
 type Category = {
   id: number;
   name: string;
+};
+
+type CategoryDetails = Category & {
   programs: Program[];
 };
 
@@ -41,7 +44,25 @@ class CategoryRepository {
       [id],
     );
 
-    return rows[0] as Category;
+    return rows[0] as CategoryDetails;
+  }
+
+  async update(category: Category) {
+    const [result] = await databaseClient.query<Result>(
+      "update category set name = ? where id = ?",
+      [category.name, category.id],
+    );
+
+    return result.affectedRows;
+  }
+
+  async create(category: Omit<Category, "id">) {
+    const [result] = await databaseClient.query<Result>(
+      "insert into category (name) values (?)",
+      [category.name],
+    );
+
+    return result.insertId;
   }
 }
 
