@@ -61,7 +61,18 @@ const add: RequestHandler = async (req, res, next) => {
     next(err);
   }
 };
+const destroy: RequestHandler = async (req, res, next) => {
+  try {
+    const categoryId = Number(req.params.id);
+
+    await categoryRepository.delete(categoryId);
+
+    res.sendStatus(204);
+  } catch (err) {
+    next(err);
+  }
+};
 
 // Export them to import them somewhere else
 
-export default { browse, read, edit, add };
+export default { browse, read, edit, add, destroy };
