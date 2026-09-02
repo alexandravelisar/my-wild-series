@@ -1,6 +1,6 @@
 import databaseClient from "../../../database/client";
 
-import type { Rows } from "../../../database/client";
+import type { Result, Rows } from "../../../database/client";
 
 type Program = {
   id: number;
@@ -24,6 +24,25 @@ class ProgramRepository {
     );
 
     return rows[0] as Program;
+  }
+  async update(program: Program) {
+    const [result] = await databaseClient.query<Result>(
+      `
+    update program
+    set title = ?, synopsis = ?, poster = ?, country = ?, year = ?
+    where id = ?
+    `,
+      [
+        program.title,
+        program.synopsis,
+        program.poster,
+        program.country,
+        program.year,
+        program.id,
+      ],
+    );
+
+    return result.affectedRows;
   }
 }
 
