@@ -34,6 +34,7 @@ const edit: RequestHandler = async (req, res, next) => {
       poster: req.body.poster,
       country: req.body.country,
       year: req.body.year,
+      category_id: req.body.category_id,
     };
 
     const affectedRows = await programRepository.update(program);
@@ -47,7 +48,24 @@ const edit: RequestHandler = async (req, res, next) => {
     next(err);
   }
 };
+const add: RequestHandler = async (req, res, next) => {
+  try {
+    const newProgram = {
+      title: req.body.title,
+      synopsis: req.body.synopsis,
+      poster: req.body.poster,
+      country: req.body.country,
+      year: req.body.year,
+      category_id: req.body.category_id,
+    };
 
+    const insertId = await programRepository.create(newProgram);
+
+    res.status(201).json({ insertId });
+  } catch (err) {
+    next(err);
+  }
+};
 // Export it to import it somewhere else
 
-export default { browse, read, edit };
+export default { browse, read, edit, add };

@@ -9,6 +9,7 @@ type Program = {
   poster: string;
   country: string;
   year: number;
+  category_id: number;
 };
 
 class ProgramRepository {
@@ -43,6 +44,24 @@ class ProgramRepository {
     );
 
     return result.affectedRows;
+  }
+  async create(program: Omit<Program, "id">) {
+    const [result] = await databaseClient.query<Result>(
+      `
+    insert into program (title, synopsis, poster, country, year)
+    values (?, ?, ?, ?, ?)
+    `,
+      [
+        program.title,
+        program.synopsis,
+        program.poster,
+        program.country,
+        program.year,
+        program.category_id,
+      ],
+    );
+
+    return result.insertId;
   }
 }
 
