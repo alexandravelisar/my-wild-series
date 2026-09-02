@@ -61,6 +61,7 @@ const add: RequestHandler = async (req, res, next) => {
     next(err);
   }
 };
+
 const destroy: RequestHandler = async (req, res, next) => {
   try {
     const categoryId = Number(req.params.id);
@@ -73,6 +74,35 @@ const destroy: RequestHandler = async (req, res, next) => {
   }
 };
 
+const validate: RequestHandler = (req, res, next) => {
+  type ValidationError = {
+    field: string;
+    message: string;
+  };
+
+  const errors: ValidationError[] = [];
+
+  const { name } = req.body;
+
+  if (name == null) {
+    errors.push({
+      field: "name",
+      message: "The field is required",
+    });
+  } else if (name.length > 255) {
+    errors.push({
+      field: "name",
+      message: "Should contain less than 255 characters",
+    });
+  }
+
+  if (errors.length === 0) {
+    next();
+  } else {
+    res.status(400).json({ validationErrors: errors });
+  }
+};
+
 // Export them to import them somewhere else
 
-export default { browse, read, edit, add, destroy };
+export default { browse, read, edit, add, destroy, validate };
