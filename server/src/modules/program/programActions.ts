@@ -66,6 +66,17 @@ const add: RequestHandler = async (req, res, next) => {
     next(err);
   }
 };
+const destroy: RequestHandler = async (req, res, next) => {
+  try {
+    const programId = Number(req.params.id);
+
+    await programRepository.delete(programId);
+
+    res.sendStatus(204);
+  } catch (err) {
+    next(err);
+  }
+};
 // Export it to import it somewhere else
 
-export default { browse, read, edit, add };
+export default { browse, read, edit, add, destroy };
